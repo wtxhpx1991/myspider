@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # 对每一个页面，首先抓取全部链接，然后根据链接里的内容生成word
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 开始抓取")
-    print("-----------------------------------------------------")
+    print("-" * 100)
     for download_url in download_url_set:
         download_req = request.Request(url=download_url, headers=head)
         download_response = request.urlopen(download_req)
@@ -58,15 +58,21 @@ if __name__ == "__main__":
             title = document.add_heading(penalty_title_result + "\n" + tag_number, 0)  # 插入标题
             title.alignment = WD_ALIGN_PARAGRAPH.CENTER  # 标题居中
             title.style.font.color.rgb = RGBColor(255, 0, 0)
-            for j in penalty_texts:
-                p = document.add_paragraph(j.text)
-                p.style.font.name = 'Times New Roman'
-                p.style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
-                p.paragraph_format.first_line_indent = Cm(0.74)
-                p.style.font.size = Pt(15)
-            documenttitle = tag_number + penalty_title_result + ".docx"
-            document.save(FILEPATH + "\\" + documenttitle)
+            if penalty_texts:
+                for j in penalty_texts:
+                    p = document.add_paragraph(j.text)
+                    p.style.font.name = 'Times New Roman'
+                    p.style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+                    p.paragraph_format.first_line_indent = Cm(0.74)
+                    p.style.font.size = Pt(15)
+                documenttitle = tag_number + penalty_title_result + ".docx"
+                documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
+                document.save(FILEPATH + "\\" + documenttitle)
+            else:
+                documenttitle = tag_number + penalty_title_result + ".docx"
+                documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
+                document.save(FILEPATH + "\\（空）\\" + documenttitle)
             print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
-            print("-"*100)
-            time.sleep(random.random() * 2)
+            print("-" * 100)
+            time.sleep(random.random())
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取")

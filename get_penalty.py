@@ -55,3 +55,10 @@ for tag in soup_core_texts_html:
     document.save(FILEPATH + "\\" + documenttitle)
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
     print("-------------------------------------------------------------------------------")
+
+
+if penalty_texts:
+    print("haha")
+else:
+    print("hehe")
+penalty_texts = sub_soup_texts.find_all("p")
