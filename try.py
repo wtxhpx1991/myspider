@@ -1,7 +1,7 @@
 # -*- coding:UTF-8 -*-
 from urllib import request
 from bs4 import BeautifulSoup
-import re,time,random
+import re
 from datetime import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -70,7 +70,6 @@ if __name__=="__main__":
             document.save(FILEPATH + "\\" + documenttitle)
             print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
             print("-----------------------------------------------------")
-            time.sleep(random.random()*10)
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取")
 
 
