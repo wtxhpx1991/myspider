@@ -1,5 +1,6 @@
 from urllib import request
 from bs4 import BeautifulSoup
+from datetime import datetime
 import re
 
 # 读取中文
@@ -16,23 +17,10 @@ soup_texts = BeautifulSoup(download_html, 'lxml')
 # 获取页面核心数据
 soup_core_texts_html = soup_texts.find_all("div", attrs={"class": "row"})
 
-
-
 for tag in soup_core_texts_html:
     print(tag.find("a").get_text())
-    print(tag.find("a").attrs['href'])
-    print(tag.find("li",class_="fbrq").get_text())
-
-
-
-
-
-
-
-soup_core_texts = BeautifulSoup(str(soup_core_texts_html[0]), 'lxml')
-soup_core_texts.find_all("div", attrs={"classpre": "Test"})
-
-# 获取页码数目
-soup_texts.find_all("div", attrs={"id": "ifrval"})
-
+    print(tag.find("a").attrs['href'].split("/")[-1])
+    tag_datetime=tag.find("li", class_="fbrq").get_text()
+    tt = datetime.strptime(tag_datetime, u"%Y年%m月%d日")
+    print(datetime.strftime(tt, "%Y%m"))
 
