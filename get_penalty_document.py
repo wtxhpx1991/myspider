@@ -53,18 +53,18 @@ if __name__ == "__main__":
             sub_soup_texts = BeautifulSoup(sub_download_html, 'lxml')
             penalty_title = sub_soup_texts.find_all("script")
             # 格式不一定对，证监会官网的格式太乱了
-            if sub_soup_texts.find_all("p", attrs={"class": "p0"}):
-                penalty_texts = sub_soup_texts.find_all("p", attrs={"class": "p0"})
-            elif sub_soup_texts.find_all("p",
-                                         attrs={"style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"}):
-                penalty_texts = sub_soup_texts.find_all("p", attrs={
-                    "style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"})
-            elif sub_soup_texts.find_all("p", attrs={
-                "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"}):
-                penalty_texts = sub_soup_texts.find_all("p", attrs={
-                    "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"})
-            elif sub_soup_texts.find_all("div", class_="Custom_UnionStyle"):
-                penalty_texts = sub_soup_texts.find_all("div", class_="Custom_UnionStyle")
+            if sub_soup_texts.find_all("div", attrs={"class":"contentss","id":"ContentRegion"}):
+                penalty_texts = sub_soup_texts.find_all("div", attrs={"class":"contentss","id":"ContentRegion"})
+            # elif sub_soup_texts.find_all("p",
+            #                              attrs={"style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"}):
+            #     penalty_texts = sub_soup_texts.find_all("p", attrs={
+            #         "style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"})
+            # elif sub_soup_texts.find_all("p", attrs={
+            #     "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"}):
+            #     penalty_texts = sub_soup_texts.find_all("p", attrs={
+            #         "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"})
+            # elif sub_soup_texts.find_all("div", class_="Custom_UnionStyle"):
+            #     penalty_texts = sub_soup_texts.find_all("div", class_="Custom_UnionStyle")
             else:
                 penalty_texts = []
             # 文档结果

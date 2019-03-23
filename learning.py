@@ -12,7 +12,7 @@ FILEPATH=r"F:\book\行政处罚决定书"
 
 penalty_title_pattern = re.compile("[\u4e00-\u9fa5]+")
 
-sub_download_url = "http://www.csrc.gov.cn/pub/zjhpublic/G00306212/201112/t20111227_204195.htm"
+sub_download_url = "http://www.csrc.gov.cn/pub/zjhpublic/G00306212/201001/t20100125_175876.htm"
 head = {}
 head[
     'User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 SE 2.X MetaSr 1.0"
@@ -21,7 +21,8 @@ sub_download_response = request.urlopen(sub_download_req)
 sub_download_html = sub_download_response.read().decode('UTF-8', 'ignore')
 sub_soup_texts = BeautifulSoup(sub_download_html, 'lxml')
 penalty_title = sub_soup_texts.find_all("script")
-penalty_texts = sub_soup_texts.find_all("p", attrs={"style":"TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"})
+# penalty_texts = sub_soup_texts.find_all("p", attrs={"style":"TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"})
+penalty_texts = sub_soup_texts.find_all("div", attrs={"class":"contentss","id":"ContentRegion"})
 # penalty_texts = sub_soup_texts.find_all("div", class_="Custom_UnionStyle")
 
 penalty_title_result = re.findall(r'"(.*?)"', str(penalty_title))[0]
