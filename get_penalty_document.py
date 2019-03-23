@@ -1,7 +1,7 @@
 # -*- coding:UTF-8 -*-
 from urllib import request
 from bs4 import BeautifulSoup
-import re,time,random
+import re, time, random
 from datetime import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -10,8 +10,8 @@ from docx.shared import Pt
 from docx.shared import Cm
 from docx.oxml.ns import qn
 
-if __name__=="__main__":
-    penalty_title_pattern = re.compile("[\u4e00-\u9fa5]+")
+if __name__ == "__main__":
+    # penalty_title_pattern = re.compile("^\"[\u4e00-\u9fa5]+\"$")
     # 设置头文件
     head = {}
     head[
@@ -52,12 +52,10 @@ if __name__=="__main__":
             penalty_title = sub_soup_texts.find_all("script")
             penalty_texts = sub_soup_texts.find_all("p", attrs={"class": "p0"})
             # 文档结果
-            penalty_title_result = penalty_title_pattern.findall(str(penalty_title))
+            penalty_title_result = re.findall(r'"(.*?)"', str(penalty_title))[0]
             # 新建word文档
             document = Document()
-            title = document.add_heading(
-                penalty_title_result[0] + "\n" + ",".join(penalty_title_result[1:]) + "\n" + penalty_texts[1].text,
-                0)  # 插入标题
+            title = document.add_heading(penalty_title_result + "\n" + tag_number, 0)  # 插入标题
             title.alignment = WD_ALIGN_PARAGRAPH.CENTER  # 标题居中
             title.style.font.color.rgb = RGBColor(255, 0, 0)
             for j in penalty_texts:
@@ -66,14 +64,9 @@ if __name__=="__main__":
                 p.style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
                 p.paragraph_format.first_line_indent = Cm(0.74)
                 p.style.font.size = Pt(15)
-            documenttitle = penalty_title_result[0] + tag_number + ",".join(penalty_title_result[1:]) + ".docx"
+            documenttitle = tag_number + penalty_title_result + ".docx"
             document.save(FILEPATH + "\\" + documenttitle)
             print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
-            print("-----------------------------------------------------")
-            time.sleep(random.random()*10)
+            print("-"*100)
+            time.sleep(random.random() * 2)
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取")
-
-
-
-
-
