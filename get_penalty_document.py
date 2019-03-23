@@ -24,6 +24,8 @@ if __name__ == "__main__":
     PAGE_NUMBER = 60
     # 存储位置
     FILEPATH = r"F:\book\行政处罚决定书"
+    SUCCESS_NUM = 0
+    DEFAULT_NUM = 0
     # 生成网页链接
     download_url_set = ["http://www.csrc.gov.cn/pub/zjhpublic/3300/3313/index_7401.htm"]
     for i in range(PAGE_NUMBER - 1):
@@ -50,7 +52,21 @@ if __name__ == "__main__":
             sub_download_html = sub_download_response.read().decode('UTF-8', 'ignore')
             sub_soup_texts = BeautifulSoup(sub_download_html, 'lxml')
             penalty_title = sub_soup_texts.find_all("script")
-            penalty_texts = sub_soup_texts.find_all("p", attrs={"class": "p0"})
+            # 格式不一定对，证监会官网的格式太乱了
+            if sub_soup_texts.find_all("p", attrs={"class": "p0"}):
+                penalty_texts = sub_soup_texts.find_all("p", attrs={"class": "p0"})
+            elif sub_soup_texts.find_all("p",
+                                         attrs={"style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"}):
+                penalty_texts = sub_soup_texts.find_all("p", attrs={
+                    "style": "TEXT-INDENT: 25.2pt; LINE-HEIGHT: 27pt; MARGIN-RIGHT: 1pt"})
+            elif sub_soup_texts.find_all("p", attrs={
+                "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"}):
+                penalty_texts = sub_soup_texts.find_all("p", attrs={
+                    "style": "LINE-HEIGHT: 150%; MARGIN-TOP: 0pt; TEXT-INDENT: 21pt; MARGIN-BOTTOM: 0pt"})
+            elif sub_soup_texts.find_all("div", class_="Custom_UnionStyle"):
+                penalty_texts = sub_soup_texts.find_all("div", class_="Custom_UnionStyle")
+            else:
+                penalty_texts = []
             # 文档结果
             penalty_title_result = re.findall(r'"(.*?)"', str(penalty_title))[0]
             # 新建word文档
@@ -68,11 +84,15 @@ if __name__ == "__main__":
                 documenttitle = tag_number + penalty_title_result + ".docx"
                 documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
                 document.save(FILEPATH + "\\" + documenttitle)
+                SUCCESS_NUM = SUCCESS_NUM + 1
             else:
-                documenttitle = tag_number + penalty_title_result + ".docx"
+                documenttitle = tag_number + penalty_title_result + "（空）" + ".docx"
                 documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
-                document.save(FILEPATH + "\\（空）\\" + documenttitle)
+                document.save(FILEPATH + "\\" + documenttitle)
+                DEFAULT_NUM = DEFAULT_NUM + 1
+                print(tag_number + penalty_title_result + "数据格式不对！！")
             print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
             print("-" * 100)
-            time.sleep(random.random())
+            time.sleep(random.random() * 2)
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取")
+    print("共抓取%s个，成功%s个，失败%s个" % (SUCCESS_NUM + DEFAULT_NUM, SUCCESS_NUM, DEFAULT_NUM))

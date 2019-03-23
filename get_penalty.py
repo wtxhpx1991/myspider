@@ -62,3 +62,4 @@ if penalty_texts:
 else:
     print("hehe")
 penalty_texts = sub_soup_texts.find_all("p")
+
