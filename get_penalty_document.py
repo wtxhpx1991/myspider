@@ -21,9 +21,11 @@ if __name__ == "__main__":
     start_download_url = "http://www.csrc.gov.cn/pub/zjhpublic/3300/3313/index_7401_"
     # 行政处罚决定书页面数量，目前是60页
     # 不知道怎么自动抓这个数字
-    PAGE_NUMBER = 60
+    PAGE_NUMBER = 5
     # 存储位置
-    FILEPATH = r"F:\book\行政处罚决定书"
+    FILEPATH = r"E:\行政处罚决定书"
+    FILEPATH_NM = r"E:\行政处罚决定书\内幕交易"
+    FILEPATH_CZ = r"E:\行政处罚决定书\市场操纵"
     SUCCESS_NUM = 0
     DEFAULT_NUM = 0
     # 生成网页链接
@@ -53,7 +55,7 @@ if __name__ == "__main__":
             sub_soup_texts = BeautifulSoup(sub_download_html, 'lxml')
             penalty_title = sub_soup_texts.find_all("script")
             # 格式不一定对，证监会官网的格式太乱了
-            penalty_texts = sub_soup_texts.find_all("div", attrs={"class":"contentss","id":"ContentRegion"})
+            penalty_texts = sub_soup_texts.find_all("div", attrs={"class": "contentss", "id": "ContentRegion"})
             # 文档结果
             penalty_title_result = re.findall(r'"(.*?)"', str(penalty_title))[0]
             # 新建word文档
@@ -62,8 +64,14 @@ if __name__ == "__main__":
             title.alignment = WD_ALIGN_PARAGRAPH.CENTER  # 标题居中
             title.style.font.color.rgb = RGBColor(255, 0, 0)
             if penalty_texts:
+                NM_YON = 0
+                CZ_YON = 0
                 for j in penalty_texts:
                     p = document.add_paragraph(j.text)
+                    if re.search("内幕交易", j.text):
+                        NM_YON = NM_YON + 1
+                    elif re.search("操纵", j.text):
+                        CZ_YON = CZ_YON + 1
                     p.style.font.name = 'Times New Roman'
                     p.style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
                     p.paragraph_format.first_line_indent = Cm(0.74)
@@ -72,6 +80,10 @@ if __name__ == "__main__":
                 documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
                 document.save(FILEPATH + "\\" + documenttitle)
                 SUCCESS_NUM = SUCCESS_NUM + 1
+                if NM_YON:
+                    document.save(FILEPATH_NM + "\\" + documenttitle)
+                elif CZ_YON:
+                    document.save(FILEPATH_CZ + "\\" + documenttitle)
             else:
                 documenttitle = tag_number + penalty_title_result + "（空）" + ".docx"
                 documenttitle = re.sub(r'[/:*?"<>|\r\n]+', "", documenttitle)
@@ -80,6 +92,6 @@ if __name__ == "__main__":
                 print(tag_number + penalty_title_result + "数据格式不对！！")
             print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取" + documenttitle)
             print("-" * 100)
-            time.sleep(random.random() * 2)
+            time.sleep(random.random() * 10)
     print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " 结束抓取")
     print("共抓取%s个，成功%s个，失败%s个" % (SUCCESS_NUM + DEFAULT_NUM, SUCCESS_NUM, DEFAULT_NUM))
